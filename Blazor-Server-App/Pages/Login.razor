@@ -1,0 +1,60 @@
+﻿@page "/login"
+@layout UnAuthLayout
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+<div class="main-background">
+    <div class="container" style="max-width: 500px;">
+        <div class="card custom-card">
+            <div class="card-body">
+                <h5 class="card-title">Login</h5>
+                @if (isInvalid)
+                {<div class="validation-message">Username or Password is invalid.</div>}
+
+                <EditForm Model="userModel" OnValidSubmit="loginUser">
+                    <DataAnnotationsValidator />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="text" @bind="userModel.Username" class="form-control" placeholder="Username" />
+                                <ValidationMessage For="()=>userModel.Username"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="text" @bind="userModel.Password" class="form-control" placeholder="Password" />
+                                <ValidationMessage For="()=>userModel.Password"></ValidationMessage>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    UserModel userModel = new UserModel();
+
+    private bool isInvalid = false;
+
+    private void loginUser(EditContext context)
+    {
+        isInvalid = false;
+        var data = (UserModel)context.Model;
+        if (data.Username == "admin@microsoft.com" && data.Password == "123")
+        {
+            ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkAsAuthorize(data.Username);
+            sessionStorage.SetItemAsync<string>("username", data.Username);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            isInvalid = true;
+        }
+    }
+}

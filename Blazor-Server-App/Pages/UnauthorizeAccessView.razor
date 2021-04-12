@@ -1,0 +1,14 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="main-background">
+    <h2 class="lbl-center">You are signed out!!! Please login here <a href="/login">login</a>.</h2>
+</div>
+
+@code { 
+    protected override Task OnInitializedAsync()
+    {
+        NavigationManager.NavigateTo("/login");
+        return base.OnInitializedAsync();
+    }    
+}
+ 
